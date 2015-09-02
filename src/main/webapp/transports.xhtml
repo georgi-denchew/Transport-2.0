@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./index.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+   <ui:define name="title">
+        Транспорти
+    </ui:define>
+
+    <ui:define name="body">
+
+        <h:form id="insert-form">
+
+            <p:breadCrumb>
+                <p:menuitem title="Всички транспорти" value="Всички транспорти" url="/transports/all-transports"/>
+            </p:breadCrumb>
+
+            <h:panelGrid id="new-delivery-grid" columns="2" cellspacing="5" styleClass="insert-form">
+                <f:facet name="header">
+                    <h2>Нов Транспорт</h2>
+                </f:facet>
+
+                <p:outputLabel for="year" value="Година:"/>
+                <p:selectOneMenu id="year"  value="#{transportJSFController.newTransport.year}">
+                    <f:selectItems value="#{transportJSFController.years}"/>
+                </p:selectOneMenu>
+
+                <p:outputLabel for="week-number" value="Номер на Седмица:"/>
+                <p:selectOneMenu id="week-number"  value="#{transportJSFController.newTransport.weekNumber}">
+                    <f:selectItems value="#{transportJSFController.weekNumbers}"/>
+                </p:selectOneMenu>
+
+                <f:facet name="footer">
+                    <p:commandButton id="show-new-delivery"  value="Добави"
+                                     action="#{transportJSFController.addTransport}"
+                                     update=":transportation-form @form :growls" />
+                </f:facet>
+            </h:panelGrid>
+        </h:form>
+
+        <h:form id="transportation-form">
+
+            <p:dataTable id="transportation-datatable" 
+                         value="#{transportJSFController.allTransportations}"
+                         paginator="true" 
+                         rows="20"
+                         currentPageReportTemplate="Страница {currentPage} от {totalPages}"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="20,40 #{transportJSFController.allTransportations.size()}"
+                         var="transport">
+
+                <p:column headerText="Навигация" width="20%;">
+                    <p:commandButton value="Пратки" ajax="false" action="#{transportJSFController.viewBookspackages(transport)}"/>
+                    <p:commandButton title="Всички книги за транспорта" value="Всички Книги" ajax="false" action="#{transportJSFController.viewBooks(transport)}"/>
+                    <p:commandButton title="Цена" value="Цена" 
+                                     action="#{transportJSFController.setTransportInSession(transport)}"
+                                     oncomplete="PF('priceDialog').show();"
+                                     update=":price-dialog">
+                        <f:setPropertyActionListener target="#{transportJSFController.transportId}" value="#{transport.id}"/>
+                    </p:commandButton>
+
+                </p:column>
+
+                <p:column sortBy="weekNumber" headerText="Номер на седмица">
+                    <p:outputLabel value="#{transport.weekNumber}">
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column sortBy="year" headerText="Година">
+                    <p:outputLabel value="#{transport.year}">
+                    </p:outputLabel>
+                </p:column>
+
+                <p:column sortBy="startDate" headerText="Петък от седмицата">
+                    <p:outputLabel value="#{transport.startDate}">
+                        <f:convertDateTime pattern="dd.MM.yyyy"/>
+                    </p:outputLabel>                    
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="price-dialog"
+                  header="Парола за Цена" 
+                  widgetVar="priceDialog" 
+                  closeOnEscape="true"
+                  showEffect="blind"                  
+                  hideEffect="blind"
+                  minHeight="40">
+            <h:form prependId="false">
+                <h:panelGrid style="width:500px;" columns="2">
+                    <p:outputLabel for="price-password" value="Парола за изтриване:"/>
+                    <p:password id="price-password" required="true" requiredMessage="Паролата е задължителна!">
+                        <f:validator binding="#{deleteDeliveryValidator}"  />
+                    </p:password>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Влез" 
+                                         action='#{transportJSFController.viewAdditionalCosts}'
+                                         onsuccess="PF('priceDialog').hide(1000);"
+                                         update=":growls"
+                                         />
+                    </f:facet>
+                </h:panelGrid>    
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

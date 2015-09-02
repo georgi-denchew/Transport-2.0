@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./index.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Кашони
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="boxes-form">
+
+            <p:breadCrumb>
+                <p:menuitem url="/transports" value="Всички транспорти" title="Всички транспорти"/>
+                <p:menuitem 
+                    value='Пратки за транспорт "#{boxJSFController.transport.weekNumber}/#{boxJSFController.transport.year}"' url="/bookspackages?transport-id#{boxJSFController.transport.id}"/>
+                <p:menuitem value='Книги за пратка "#{boxJSFController.bookspackage.packageNumber}"' url="/books?bookspackage-id=#{boxJSFController.bookspackage.id}"/>
+                <p:menuitem value='Кашони за книгa "#{boxJSFController.book.title}"' url="/boxes?book-id=#{boxJSFController.book.id}"/>
+            </p:breadCrumb>
+
+            <h:panelGrid styleClass="insert-form">
+                <h:panelGrid columns="4" style="margin: 0 auto;">
+                    <f:facet name="header">
+                        <h2>Текуща Книга</h2>
+                    </f:facet>
+                    <h:panelGrid  styleClass="large-text" columns="2">
+                        <p:outputLabel value="Номер на книга:"/>
+                        <p:outputLabel styleClass="bold" value="#{boxJSFController.book.bookNumber}"/>
+
+                        <p:outputLabel value="Заглавие на книга:"/>
+                        <p:outputLabel styleClass="bold" value="#{boxJSFController.book.title}"/>
+                    </h:panelGrid>
+                </h:panelGrid>
+
+                <h:panelGrid>
+                    <f:facet name="header">
+                        <h2>Добави кашони</h2>
+                    </f:facet>
+
+                    <h:panelGrid columns="2" cellspacing="5">
+
+                        <p:outputLabel value="Брой книги:"/>
+                        <p:inputText value="#{boxJSFController.newBox.booksCount}" converterMessage='Полето "Брой книги" трябва да е цяло число!'/>
+
+                        <p:outputLabel value="Брой кашони:"/>
+                        <p:inputText value="#{boxJSFController.newBox.boxesCount}" converterMessage='Полето "Брой кашони" трябва да е цяло число!'/>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Добави"
+                                             action="#{boxJSFController.addBox}"
+                                             update="@form :growls" />
+                        </f:facet>
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:panelGrid>
+
+            <p:dataTable id="boxes-datatable"
+                         value="#{boxJSFController.boxes}"
+                         editable="true"
+                         var="box"
+                         paginator="true" 
+                         rows="20"
+                         currentPageReportTemplate="Страница {currentPage} от {totalPages}"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="20,40 #{boxJSFController.boxes.size()}"
+                         
+                         >
+
+                <p:ajax event="rowEdit" async="false"  class="edit-button" 
+                        update="boxes-datatable :growls"  listener="#{boxJSFController.onEdit}" />
+                <p:ajax immediate="true" event="rowEditCancel" listener="#{boxJSFController.onCancelEdit}"
+                        update="boxes-datatable :growls" 
+                        onstart="if(confirm('Откажи промените?')) return true;"/>
+
+                <p:column width="2%;">
+                    <p:commandButton title="Изтрий" icon="ui-icon-trash"
+                                     oncomplete="PF('deleteDialog').show();">
+                        <f:setPropertyActionListener target="#{boxJSFController.selectedBox}"
+                                                     value="#{box}"/>
+                    </p:commandButton>
+                </p:column>
+
+                <p:column width="2%;">
+                    <p:rowEditor />
+                </p:column>
+
+                <p:column headerText="Брой книги">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{box.booksCount}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{box.booksCount}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Брой кашони">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{box.boxesCount}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{box.boxesCount}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="delete-dialog"
+                  header="Изтрий Книга" 
+                  widgetVar="deleteDialog" 
+                  closeOnEscape="true"
+                  showEffect="blind"
+                  hideEffect="blind"
+                  minHeight="40">
+            <h:form prependId="false">
+                <h:panelGrid style="width:500px;" columns="2">
+                    <p:outputLabel for="entered-password" value="Парола за изтриване:"/>
+                    <p:password id="entered-password" required="true" requiredMessage="Паролата е задължителна!">
+                        <f:validator binding="#{deleteDeliveryValidator}"  />
+                    </p:password>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Изтрий" 
+                                         actionListener="#{boxJSFController.deleteBox}"
+                                         update=":boxes-form :growls"
+                                         onsuccess="PF('deleteDialog').hide(1000);"/>
+                    </f:facet>
+                </h:panelGrid>    
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

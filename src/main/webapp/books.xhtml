@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./index.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="title">
+        Книги
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="books-form">
+            <p:breadCrumb>
+                <p:menuitem url="/transports" title="Всички транспорти" value="Всички транспорти"/>
+                <p:menuitem 
+                    value='Пратки за транспорт "#{bookJSFController.transport.weekNumber}/#{bookJSFController.transport.year}"' url="/bookspackages?transport-id=#{bookJSFController.transportId}"/>
+                <p:menuitem value='Книги за пратка "#{bookJSFController.bookspackage.packageNumber}"' url="/books?bookspackage-id=#{bookJSFController.bookspackageId}"/>
+            </p:breadCrumb>
+
+            <h:panelGrid rendered="#{!bookJSFController.isForTransportation}" styleClass="insert-form">
+                <f:facet name="header">
+                    <h2>Добави книга за пратка "#{bookJSFController.bookspackage.packageNumber}"</h2>
+                </f:facet>
+                <p:outputPanel>    
+                    <p:selectOneRadio  id="title-radios" layout="custom" value="#{bookJSFController.isNewTitle}">
+                        <p:ajax update="@form" />
+                        <f:selectItem itemValue="true"/>
+                        <f:selectItem itemValue="false"/>
+                    </p:selectOneRadio>
+
+                    <h:panelGrid columns="3" cellspacing="4px">
+                        <p:outputLabel styleClass="label-dropdown-bug-fix" for="title-radio-0" value="Ново Заглавие:"/>
+                        <p:radioButton id="title-radio-0" for="title-radios" itemIndex="0"/>
+                        <p:inputText size="50"  disabled="#{!bookJSFController.isNewTitle}" 
+                                     required="true" requiredMessage="Заглавието е задължително!" 
+                                     value="#{bookJSFController.newBook.title}"/>
+
+                        <p:outputLabel styleClass="label-dropdown-bug-fix" for="title-radio-1"  value="Съществуващо Заглавие:"/>
+                        <p:radioButton id="title-radio-1" for="title-radios" itemIndex="1"/>
+
+                        <p:selectOneMenu disabled="#{bookJSFController.isNewTitle}" style="width: 99%;" 
+                                         required="true" requiredMessage="Заглавието е задължително!" 
+                                         value="#{bookJSFController.selectedBookModelBookNumber}">
+                            <f:selectItems value="#{bookJSFController.allBookModels}" var="bookModel" itemLabel="#{bookModel.title}" itemValue="#{bookModel.bookNumber}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                </p:outputPanel>
+
+
+                <h:panelGrid columns="6" cellspacing="4px">
+
+                    <p:outputLabel for="count" value="Брой:"/>
+                    <p:inputText size="3" id="count" value="#{bookJSFController.newBook.count}"
+                                 styleClass="add-book-last-row-input"
+                                 converterMessage='Полето "Брой" трябва да е цяло число!'/>
+
+                    <p:outputLabel for="weight" value="Тегло(кг):"/>
+                    <p:inputText size="3" id="weight" value="#{bookJSFController.newBook.weight}" 
+                                 styleClass="add-book-last-row-input"
+                                 converterMessage='Полето "Тегло(кг)" трябва да е число!'/>
+
+                    <p:outputLabel for="printing-house" value="Печатница:"/>
+                    <p:selectOneMenu 
+                        styleClass="printing-house-drop-down add-book-last-row-label" id="printing-house" converter="#{printingHouseConverter}"
+                        value="#{bookJSFController.newBook.printingHouse}">
+                        <f:selectItem itemLabel="Изберете Печатница" itemValue="#{null}"/>
+                        <f:selectItems value="#{bookJSFController.allPrintingHouses}" var="printingHouse" itemLabel="#{printingHouse.name}" itemValue="#{printingHouse}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Добави"
+                                     action="#{bookJSFController.addBook}"
+                                     update="@form :books-datatable-form :growls" />
+                </f:facet>
+            </h:panelGrid>
+        </h:form>
+        <h:form id="books-datatable-form">
+            <p:dataTable id="books-datatable"
+                         value="#{bookJSFController.books}"
+                         editable="true"
+                         rowStyleClass='#{book.discarded == true ? "book-discarded" : ""}'
+                         var="book"
+                         paginator="true" 
+                         rows="20"
+                         currentPageReportTemplate="Страница {currentPage} от {totalPages}"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="20,40 #{bookJSFController.books.size()}"
+                         
+                         >
+
+                <p:column rendered="#{!bookJSFController.isForTransportation}" exportable="false" width="10%;" headerText="Действия">
+                    <p:splitButton 
+                        value="Кашони" title="Кашони"
+                        type="submit" ajax="false"
+                        action="#{bookJSFController.viewBoxes(book)}" >
+
+                        <p:menuitem 
+                            value="Пратки"
+                            title="Всички пратки в транспорта, съдържащи книгата"
+                            action="#{bookJSFController.viewBookspackages}" ajax="false">
+                            <f:setPropertyActionListener target="#{bookJSFController.selectedBook}"
+                                                         value="#{book}"/>
+                        </p:menuitem>
+
+                        <p:menuitem icon="ui-icon-document" 
+                                    value="Етикет"
+                                    title="генерирай Етикет"
+                                    action="#{bookJSFController.getLabel}" ajax="false">
+                            <f:setPropertyActionListener target="#{bookJSFController.selectedBook}"
+                                                         value="#{book}"/>
+                        </p:menuitem>
+
+                        <p:menuitem title="Изтрий" value="Изтрий"
+                                    icon="ui-icon-trash" 
+                                    oncomplete="PF('deleteDialog').show();">
+                            <f:setPropertyActionListener target="#{bookJSFController.selectedBook}"
+                                                         value="#{book}"/>
+                        </p:menuitem>
+
+                    </p:splitButton>
+                </p:column>
+                <p:column width="2%;">
+                    <p:rowEditor />
+                </p:column>
+
+                <p:ajax event="rowEdit" async="false"  class="edit-button" 
+                        update="books-datatable :growls"  listener="#{bookJSFController.onEdit}" />
+                <p:ajax immediate="true" event="rowEditCancel" listener="#{bookJSFController.onCancelEdit}"
+                        update="books-datatable :growls" 
+                        onstart="if(confirm('Откажи промените?')) return true;"/>
+
+                <p:column headerText="Заглавие">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.title}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.title}"/>
+                        </f:facet>
+                    </p:cellEditor>              
+                </p:column>
+
+                <p:column sortBy="#{book.printingHouse.name}"
+                          filterBy="#{book.printingHouse.id}" 
+                          filterOptions="#{bookJSFController.printingHousesFilterSelectItems}"
+                          filterMatchMode="exact">
+
+                    <f:facet name="header">
+                        <h:outputText value="Печатница"/>
+                    </f:facet>
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.printingHouse == null ? null : book.printingHouse.name}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu style="width: 99%;" converter="#{printingHouseConverter}"
+                                             value="#{book.printingHouse}">
+                                <f:selectItem itemLabel="Изберете" itemValue="#{null}"/>
+                                <f:selectItems value="#{bookJSFController.allPrintingHouses}" 
+                                               var="printingHouse" itemLabel="#{printingHouse.name}" itemValue="#{printingHouse}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Отпаднала">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value='#{book.discarded == true ? "Да" : "Не"}'/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu styleClass="book-discarded-dropdown" value="#{book.discarded}">
+                                <f:selectItem itemLabel="Не" itemValue="false"/>
+                                <f:selectItem itemLabel="Да" itemValue="true"/>
+
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>              
+                </p:column>
+
+                <p:column headerText="Брой Поръчани">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.count}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{book.count}"/>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+
+                <p:column headerText="Тегло(кг) поръчани">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.weight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{book.weight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:inputText>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+
+                <p:column headerText="Тегло(кг) за бройка">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.weightPerBook}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.weightPerBook}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+
+                <p:column headerText="Брой Пристигнали">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.totalBooksCount}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.totalBooksCount}"/>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+
+                <p:column 
+                    styleClass='#{book.totalBooksCount - book.count lt 0 ? "errorRow" : ""}'
+                    headerText="Брой Разлика">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.totalBooksCount - book.count}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.totalBooksCount - book.count}"/>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>                
+
+                <p:column headerText="Тегло(кг) пристигнали">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.totalBooksWeight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.totalBooksWeight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+
+                <p:column headerText="Тегло(кг) Разлика">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.totalBooksWeight - book.weight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{book.totalBooksWeight - book.weight}">
+                                <f:convertNumber pattern="#.##"/>
+                            </p:outputLabel>
+                        </f:facet>
+                    </p:cellEditor>                  
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog id="delete-dialog"
+                  header="Изтрий Книга" 
+                  widgetVar="deleteDialog" 
+                  showEffect="blind"
+                  hideEffect="blind"
+                  closeOnEscape="true"
+                  minHeight="40">
+            <h:form prependId="false">
+                <h:panelGrid style="width:500px;" columns="2">
+                    <p:outputLabel for="entered-password" value="Парола за изтриване:"/>
+                    <p:password id="entered-password" required="true" requiredMessage="Паролата е задължителна!">
+                        <f:validator binding="#{deleteDeliveryValidator}"  />
+                    </p:password>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Изтрий" 
+                                         actionListener="#{bookJSFController.deleteBook}"
+                                         update=":books-datatable-form :growls"
+                                         onsuccess="PF('deleteDialog').hide(1000);"/>
+                    </f:facet>
+                </h:panelGrid>    
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
