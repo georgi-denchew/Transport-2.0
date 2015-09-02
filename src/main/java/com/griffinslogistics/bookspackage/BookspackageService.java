@@ -13,7 +13,7 @@ import com.griffinslogistics.entities.Transport;
 import com.griffinslogistics.entities.TruckGroup;
 import com.griffinslogistics.resource.ResourceBundleBean;
 import com.griffinslogistics.transport.ITransportService;
-import com.griffinslogitstics.utils.Utilities;
+import com.griffinslogistics.utils.Utilities;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
