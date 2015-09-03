@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.FetchMode;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -55,7 +56,7 @@ public class BookService implements IBookService, Serializable {
             + "where bo.bookspackageId = :bookspackageId "
             + "group by b.booksCount, bo.bookNumber "
             + "order by bo.bookNumber ";
-    
+
     private static final String QUERY_BIGGEST_BOOK_NUMBER_FOR_TRANSPORT = "select max(book.bookNumber) from Book book where book.transportId = :transportId";
 
     @Autowired
@@ -228,11 +229,11 @@ public class BookService implements IBookService, Serializable {
 
     @Override
     public Integer getBiggestBookNumberForTransportId(Long transportId) {
-        
-         logger.log(Level.SEVERE, "{0}: getBiggestBookNumberForTransportation started", CLASS_NAME);
+
+        logger.log(Level.SEVERE, "{0}: getBiggestBookNumberForTransportation started", CLASS_NAME);
 
         Integer biggestBookspackageNumber = null;
-        
+
         try {
             Map<String, Object> queryParameters = new HashMap<String, Object>();
             queryParameters.put("transportId", transportId);
@@ -254,11 +255,11 @@ public class BookService implements IBookService, Serializable {
 
     @Override
     public List<BookLabelModel> getLabelInfoForBooks(List<Long> selectedBookIds) {
-        
-         DetachedCriteria criteria = DetachedCriteria.forClass(Book.class)
+
+        DetachedCriteria criteria = DetachedCriteria.forClass(Book.class)
                 .setFetchMode(Bookspackage.class.getName(), FetchMode.JOIN)
                 .add(Restrictions.in("id", selectedBookIds));
-        
+
         List<Book> books = (List<Book>) this.dao.getAllByDetachedCriteria(criteria);
 
         List<BookLabelModel> result = new ArrayList<BookLabelModel>();
@@ -328,8 +329,16 @@ public class BookService implements IBookService, Serializable {
         List<BookForTransportationModel> resultList = new ArrayList<BookForTransportationModel>();
 
         try {
-            Transport transportation = this.transportService.get(transportId);
+
+            DetachedCriteria criteria = DetachedCriteria.forClass(Transport.class);
+            criteria.add(Restrictions.eq("id", transportId));
+            criteria.setFetchMode("books", FetchMode.JOIN);
+            criteria.setFetchMode("books.boxes", FetchMode.JOIN);
+
+            Transport transportation = (Transport) this.dao.getByDetachedCriteria(criteria);
+
             for (Book book : transportation.getBooks()) {
+                Hibernate.initialize(book.getBoxes());
 
                 if (book.getPrintingHouse() != null) {
                     book.getPrintingHouse().getName();

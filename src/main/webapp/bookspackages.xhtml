@@ -142,7 +142,9 @@
                             <f:convertNumber pattern="#.##"/> кг
                         </h:outputLabel>
                     </h3>
-                    <ui:repeat value="#{bookspackageJSFController.totalWeightsKeys.subList(0, bookspackageJSFController.totalWeightsKeys.size() - 1)}" var="key">
+
+
+                    <ui:repeat value="#{bookspackageJSFController.totalWeightsKeys}" var="key">
                         <span class="truck-group">
                             <h:outputLabel style="font-weight: bold;" value="#{key}: "/>
                             <h:outputLabel value="#{bookspackageJSFController.totalWeights.get(key)}">
@@ -322,6 +324,20 @@
                         </f:facet>
                         <f:facet name="input">
                             <p:outputLabel value="#{bookspackage.packageNumber}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column >
+                    <f:facet name="header">
+                        <h:outputText value="Брой Кашони"/>
+                    </f:facet>
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{bookspackage.boxes.size()}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:outputLabel value="#{bookspackage.boxes.size()}"/>
                         </f:facet>
                     </p:cellEditor>
                 </p:column>

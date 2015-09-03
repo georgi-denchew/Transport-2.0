@@ -28,10 +28,11 @@ public class BookForTransportationModel implements java.io.Serializable {
     private String client;
     private String merchant;
     private Date deliveryDate;
+    int boxesCount;
 
     public BookForTransportationModel(Long id, String bookspackageNumber, String printingHouseName,
             int bookNumber, String title, int count, double weight, double weightPerBook, boolean discarded,
-            String deliveryAddress, String client, String merchant, Date deliveryDate) {
+            String deliveryAddress, String client, String merchant, Date deliveryDate, int boxesCount) {
         this.id = id;
         this.bookspackageNumber = bookspackageNumber;
         this.printingHouseName = printingHouseName;
@@ -45,6 +46,7 @@ public class BookForTransportationModel implements java.io.Serializable {
         this.client = client;
         this.merchant = merchant;
         this.deliveryDate = deliveryDate;
+        this.boxesCount = boxesCount;
     }
 
     public static BookForTransportationModel fromBook(Book book) {
@@ -53,7 +55,8 @@ public class BookForTransportationModel implements java.io.Serializable {
                         book.getPrintingHouse() != null ? book.getPrintingHouse().getName() : null,
                         book.getBookNumber(), book.getTitle(), book.getCount(), book.getWeight(),
                         book.getWeightPerBook(), book.isDiscarded(), book.getDeliveryAddress(),
-                        book.getBookspackage().getClient(), book.getBookspackage().getMerchant(), book.getBookspackage().getDeliveryDate());
+                        book.getBookspackage().getClient(), book.getBookspackage().getMerchant(), 
+                        book.getBookspackage().getDeliveryDate(), book.getBoxes().size());
 
         return bookForTransportationModel;
     }
@@ -160,5 +163,13 @@ public class BookForTransportationModel implements java.io.Serializable {
 
     public void setDeliveryDate(Date deliveryDate) {
         this.deliveryDate = deliveryDate;
+    }
+
+    public int getBoxesCount() {
+        return boxesCount;
+    }
+
+    public void setBoxesCount(int boxesCount) {
+        this.boxesCount = boxesCount;
     }
 }

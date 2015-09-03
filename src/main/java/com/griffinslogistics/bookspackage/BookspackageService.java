@@ -67,6 +67,7 @@ public class BookspackageService implements IBookspackageService {
         criteria.setFetchMode("bookspackages", FetchMode.JOIN);
         criteria.setFetchMode("bookspackages.truckGroup", FetchMode.JOIN);
         criteria.setFetchMode("bookspackages.books", FetchMode.JOIN);
+        criteria.setFetchMode("bookspackages.boxes", FetchMode.JOIN);
         criteria.setFetchMode("bookspackages.books.boxes", FetchMode.JOIN);
 
         Transport transportationForBookspackage = (Transport) this.bookspackageDAO.getByDetachedCriteria(criteria);
@@ -147,7 +148,7 @@ public class BookspackageService implements IBookspackageService {
 
     @Override
     public String generateUniqueBookspackageNumber(String biggestNumber, int year, int week) {
-        return Utilities.generateUniqueBookspackageNumber(biggestNumber, week, year);
+        return Utilities.generateUniqueBookspackageNumber(biggestNumber, year, week);
     }
 
     @Override

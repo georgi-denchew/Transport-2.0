@@ -110,12 +110,17 @@
                     sortBy="#{book.deliveryDate}"
                     filterBy="#{book.deliveryDate}"
                     filterMatchMode="contains">
-
                     <f:facet name="header">
                         <h:outputText value="Дата на доставка"/>
                     </f:facet>
-
                     <p:outputLabel value="#{book.deliveryDate}"/>  
+                </p:column>
+                
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="Брой Кашони"/>
+                    </f:facet>
+                    <p:outputLabel value="#{book.boxesCount}"/>  
                 </p:column>
 
                 <p:column sortBy="#{book.printingHouseName}"
