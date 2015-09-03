@@ -6,6 +6,7 @@
 package com.griffinslogistics.book;
 
 import com.griffinslogistics.entities.Book;
+import java.util.Date;
 
 
 /**
@@ -26,10 +27,11 @@ public class BookForTransportationModel implements java.io.Serializable {
     private String deliveryAddress;
     private String client;
     private String merchant;
+    private Date deliveryDate;
 
     public BookForTransportationModel(Long id, String bookspackageNumber, String printingHouseName,
             int bookNumber, String title, int count, double weight, double weightPerBook, boolean discarded,
-            String deliveryAddress, String client, String merchant) {
+            String deliveryAddress, String client, String merchant, Date deliveryDate) {
         this.id = id;
         this.bookspackageNumber = bookspackageNumber;
         this.printingHouseName = printingHouseName;
@@ -42,6 +44,7 @@ public class BookForTransportationModel implements java.io.Serializable {
         this.deliveryAddress = deliveryAddress;
         this.client = client;
         this.merchant = merchant;
+        this.deliveryDate = deliveryDate;
     }
 
     public static BookForTransportationModel fromBook(Book book) {
@@ -50,7 +53,7 @@ public class BookForTransportationModel implements java.io.Serializable {
                         book.getPrintingHouse() != null ? book.getPrintingHouse().getName() : null,
                         book.getBookNumber(), book.getTitle(), book.getCount(), book.getWeight(),
                         book.getWeightPerBook(), book.isDiscarded(), book.getDeliveryAddress(),
-                        book.getBookspackage().getClient(), book.getBookspackage().getMerchant());
+                        book.getBookspackage().getClient(), book.getBookspackage().getMerchant(), book.getBookspackage().getDeliveryDate());
 
         return bookForTransportationModel;
     }
@@ -149,5 +152,13 @@ public class BookForTransportationModel implements java.io.Serializable {
 
     public void setMerchant(String merchant) {
         this.merchant = merchant;
+    }
+
+    public Date getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(Date deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 }

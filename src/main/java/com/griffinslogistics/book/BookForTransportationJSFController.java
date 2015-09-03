@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,9 +39,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 @ManagedBean
 @ViewScoped
-public class BookfForTransportationJSFController implements Serializable {
+public class BookForTransportationJSFController implements Serializable {
 
-    private static final Logger logger = Logger.getLogger(BookfForTransportationJSFController.class.getName());
+    private static final Logger logger = Logger.getLogger(BookForTransportationJSFController.class.getName());
 
     @ManagedProperty(value = "#{bookService}")
     private IBookService bookService;
@@ -57,15 +58,19 @@ public class BookfForTransportationJSFController implements Serializable {
     private Transport transport;
     List<BookForTransportationModel> booksForTransportation;
     List<BookForTransportationModel> selectedBooksForPrinting;
+    List<BookForTransportationModel> filteredBooks;
     private List<SelectItem> printingHousesFilterSelectItems;
     private List<PrintingHouse> allPrintingHouses;
     private Long transportId;
+
+    private List<SelectItem> discardedFilterSelectItems;
 
     @PostConstruct
     public void init() {
         initTransporation();
         initBooksForTransportation();
         initPrintingHouses();
+        initDiscardedFilterSelectItems();
     }
 
     public void updateDiscardedField(BookForTransportationModel book) {
@@ -77,14 +82,14 @@ public class BookfForTransportationJSFController implements Serializable {
 
         if (updateSuccessful) {
             String format;
-            
+
             if (book.isDiscarded()) {
                 format = resourceBundleBean.get(ResourceBundleBean.SUCCESS_BOOK_DISCARDED);
             } else {
                 format = resourceBundleBean.get(ResourceBundleBean.SUCCESS_BOOK_RETURNED);
             }
             messageString = String.format(format, book.getTitle(), book.getBookNumber());
-            
+
             message = new FacesMessage(messageString);
 
         } else {
@@ -111,7 +116,6 @@ public class BookfForTransportationJSFController implements Serializable {
             }
 
             List<BookLabelModel> bookLabelModelList = this.bookService.getLabelInfoForBooks(selectedBookIds);
-            //this.dbHelper.books.getLabelInfoForBooks(selectedBookIds);
 
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             externalContext.responseReset();
@@ -275,5 +279,25 @@ public class BookfForTransportationJSFController implements Serializable {
 
     public void setResourceBundleBean(ResourceBundleBean resourceBundleBean) {
         this.resourceBundleBean = resourceBundleBean;
+    }
+
+    public List<SelectItem> getDiscardedFilterSelectItems() {
+        return discardedFilterSelectItems;
+    }
+
+    public void setDiscardedFilterSelectItems(List<SelectItem> discardedFilterSelectItems) {
+        this.discardedFilterSelectItems = discardedFilterSelectItems;
+    }
+
+    private void initDiscardedFilterSelectItems() {
+        this.discardedFilterSelectItems = Arrays.asList(new SelectItem("", "Всички"), new SelectItem("false", "Не"), new SelectItem("true", "Да"));
+    }
+
+    public List<BookForTransportationModel> getFilteredBooks() {
+        return filteredBooks;
+    }
+
+    public void setFilteredBooks(List<BookForTransportationModel> filteredBooks) {
+        this.filteredBooks = filteredBooks;
     }
 }

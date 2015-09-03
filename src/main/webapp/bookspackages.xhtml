@@ -68,7 +68,9 @@
                     </p:inputText> 
 
                     <p:outputLabel for="delivery-date" value="Доставка най-късно:" />
-                    <p:calendar size="30" id="delivery-date"  pattern="dd.MM.yyyy" value="#{bookspackageJSFController.newBookspackage.deliveryDate}"/>
+                    <p:calendar size="30" id="delivery-date"  pattern="dd.MM.yyyy" 
+                                locale="bg" 
+                                value="#{bookspackageJSFController.newBookspackage.deliveryDate}"/>
 
                     <p:outputLabel for="print-delivery-day" value="Ден доставка от печат:" styleClass="label-dropdown-bug-fix" />
                     <p:inputText size="30" id="print-delivery-day" 
@@ -411,7 +413,7 @@
                             </p:outputLabel>
                         </f:facet>
                         <f:facet name="input">
-                            <p:calendar value="#{bookspackage.deliveryDate}" pattern="dd.MM.yyyy"/>
+                            <p:calendar value="#{bookspackage.deliveryDate}" locale="bg"  pattern="dd.MM.yyyy"/>
                         </f:facet>
                     </p:cellEditor>
                 </p:column>

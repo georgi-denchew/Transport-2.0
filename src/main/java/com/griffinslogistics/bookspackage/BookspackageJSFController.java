@@ -44,7 +44,7 @@ import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureExcep
  */
 @ManagedBean
 @ViewScoped
-public class BookspackageJSFController implements Serializable{
+public class BookspackageJSFController implements Serializable {
 
     @ManagedProperty(value = "#{bookspackageService}")
     private IBookspackageService bookspackageService;
@@ -87,8 +87,7 @@ public class BookspackageJSFController implements Serializable{
     private SelectItem[] bookspackageStateSelectItems;
     private SelectItem[] bookspackageStateFilterSelectItems;
     private Bookspackage newBookspackage;
-    
-    
+
     private List<Bookspackage> bookspackageHistories;
 
     @PostConstruct
@@ -119,13 +118,13 @@ public class BookspackageJSFController implements Serializable{
 
         if (added) {
             this.bookspackages.add(0, this.newBookspackage);
-            this.newBookspackage = new Bookspackage();
             message = resourceBundleBean.get(ResourceBundleBean.SUCCESS_BOOKSPACKAGE_ADDED);
             facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, message, "");
         } else {
             message = resourceBundleBean.get(ResourceBundleBean.ERROR_BOOKSPACKAGE_ADD);
             facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, message, null);
         }
+        this.newBookspackage = new Bookspackage();
 
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }

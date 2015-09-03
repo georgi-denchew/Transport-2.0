@@ -10,16 +10,16 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="title">
-        Книги за Транспорт #{bookfForTransportationJSFController.transport.weekNumber}/#{bookfForTransportationJSFController.transport.year}
+        Книги за Транспорт #{bookForTransportationJSFController.transport.weekNumber}/#{bookForTransportationJSFController.transport.year}
     </ui:define>
 
     <ui:define name="body">
         <h:form id="books-form">
             <p:breadCrumb>
                 <p:menuitem url="/transports" title="Всички транспорти" value="Всички транспорти"/>
-                <p:menuitem url="/books-for-transportation?transport-id=#{bookfForTransportationJSFController.transportId}" 
+                <p:menuitem url="/books-for-transportation?transport-id=#{bookForTransportationJSFController.transportId}" 
                             title="Книги за транспорт"
-                            value='Книги за Транспорт "#{bookfForTransportationJSFController.transport.weekNumber}/#{bookfForTransportationJSFController.transport.year}"'/>
+                            value='Книги за Транспорт "#{bookForTransportationJSFController.transport.weekNumber}/#{bookForTransportationJSFController.transport.year}"'/>
             </p:breadCrumb>
 
             <h:panelGrid styleClass="insert-form">
@@ -29,9 +29,9 @@
                     </f:facet>
                     <h:panelGrid styleClass="large-text" columns="4">
                         <p:outputLabel value="Година:"/>
-                        <p:outputLabel styleClass="bold" value="#{bookfForTransportationJSFController.transport.year}"/>
+                        <p:outputLabel styleClass="bold" value="#{bookForTransportationJSFController.transport.year}"/>
                         <p:outputLabel value="Седмица:"/>
-                        <p:outputLabel styleClass="bold" value="#{bookfForTransportationJSFController.transport.weekNumber}"/>
+                        <p:outputLabel styleClass="bold" value="#{bookForTransportationJSFController.transport.weekNumber}"/>
                     </h:panelGrid>
                 </h:panelGrid>
             </h:panelGrid>
@@ -41,32 +41,34 @@
 
             <p:commandButton id="xls" ajax="false" value="Извлечи таблицата в Excel" icon="ui-icon-document">  
                 <pe:exporter type="xlsx" target="books-datatable" 
-                             postProcessor="#{bookfForTransportationJSFController.postProcessXLS}"
-                             fileName="Knigi Transport #{bookfForTransportationJSFController.transport.weekNumber}/#{bookfForTransportationJSFController.transport.year}"
+                             postProcessor="#{bookForTransportationJSFController.postProcessXLS}"
+                             fileName="Knigi Transport #{bookForTransportationJSFController.transport.weekNumber}/#{bookForTransportationJSFController.transport.year}"
                              />  
             </p:commandButton>  
-            <p:commandButton id="label-generator-button" value="Извлечи етикети" icon="ui-icon-document" action="#{bookfForTransportationJSFController.getLabel}" ajax="false"/>
+            <p:commandButton id="label-generator-button" value="Извлечи етикети" icon="ui-icon-document" action="#{bookForTransportationJSFController.getLabel}" ajax="false"/>
 
             <p:dataTable id="books-datatable"
-                         value="#{bookfForTransportationJSFController.booksForTransportation}"
+                         value="#{bookForTransportationJSFController.booksForTransportation}"
                          rowStyleClass='#{book.discarded == true ? "book-discarded" : ""}'
                          var="book"
+                         widgetVar="booksTable"
                          paginator="true" 
-                         rows="#{bookfForTransportationJSFController.booksForTransportation.size()}" 
+                         rows="#{bookForTransportationJSFController.booksForTransportation.size()}" 
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}   Брой редове: {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="20,40 #{bookfForTransportationJSFController.booksForTransportation.size()}"
-                         selection="#{bookfForTransportationJSFController.selectedBooksForPrinting}" rowKey="#{book.id}"
+                         rowsPerPageTemplate="20,40 #{bookForTransportationJSFController.booksForTransportation.size()}"
+                         selection="#{bookForTransportationJSFController.selectedBooksForPrinting}" rowKey="#{book.id}"
                          >
                 <p:column headerText="Извлечи етикет" exportable="false" selectionMode="multiple" style="width:16px;text-align:center"/>
 
-                <!-- facets are used instead of headerText for exported excel headers-->
-
-                <p:column>
+                
+                <p:column filterBy="#{book.discarded}"
+                          filterOptions="#{bookForTransportationJSFController.discardedFilterSelectItems}"
+                          >
                     <f:facet name="header">
-                        <h:outputText value="Отпаднала"/>
+                       <h:outputText value="Отпаднала"/>
                     </f:facet>
                     <p:selectBooleanButton value="#{book.discarded}" onLabel="Да" offLabel="Не">
-                        <p:ajax update=":growls books-datatable" listener="#{bookfForTransportationJSFController.updateDiscardedField(book)}" />
+                        <p:ajax update=":growls books-datatable" listener="#{bookForTransportationJSFController.updateDiscardedField(book)}" />
                     </p:selectBooleanButton>                                      
                 </p:column>
 
@@ -104,9 +106,21 @@
                     <p:outputLabel value="#{book.deliveryAddress}"/>  
                 </p:column>
 
+                <p:column 
+                    sortBy="#{book.deliveryDate}"
+                    filterBy="#{book.deliveryDate}"
+                    filterMatchMode="contains">
+
+                    <f:facet name="header">
+                        <h:outputText value="Дата на доставка"/>
+                    </f:facet>
+
+                    <p:outputLabel value="#{book.deliveryDate}"/>  
+                </p:column>
+
                 <p:column sortBy="#{book.printingHouseName}"
                           filterBy="#{book.printingHouseName}" 
-                          filterOptions="#{bookfForTransportationJSFController.printingHousesFilterSelectItems}"
+                          filterOptions="#{bookForTransportationJSFController.printingHousesFilterSelectItems}"
                           filterMatchMode="exact">
 
                     <f:facet name="header">

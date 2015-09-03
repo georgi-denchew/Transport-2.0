@@ -12,8 +12,9 @@ package com.griffinslogistics.bookspackage;
 public enum BookspackagePriorityEnum {
 
     NEUTRAL("neutral", "Неутрална"),
-    VERY_IMPORTANT("very_important", "Много важна"),
-    URGENT("urgent", "Спешна");
+    VERY_IMPORTANT("very_important", "Важна"),
+    URGENT("urgent", "Много важна"),
+    OFFICE("office", "Офис");
 
     String value;
     String displayValue;

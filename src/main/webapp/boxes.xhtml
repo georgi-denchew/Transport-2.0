@@ -17,7 +17,7 @@
             <p:breadCrumb>
                 <p:menuitem url="/transports" value="Всички транспорти" title="Всички транспорти"/>
                 <p:menuitem 
-                    value='Пратки за транспорт "#{boxJSFController.transport.weekNumber}/#{boxJSFController.transport.year}"' url="/bookspackages?transport-id#{boxJSFController.transport.id}"/>
+                    value='Пратки за транспорт "#{boxJSFController.transport.weekNumber}/#{boxJSFController.transport.year}"' url="/bookspackages?transport-id=#{boxJSFController.transport.id}"/>
                 <p:menuitem value='Книги за пратка "#{boxJSFController.bookspackage.packageNumber}"' url="/books?bookspackage-id=#{boxJSFController.bookspackage.id}"/>
                 <p:menuitem value='Кашони за книгa "#{boxJSFController.book.title}"' url="/boxes?book-id=#{boxJSFController.book.id}"/>
             </p:breadCrumb>

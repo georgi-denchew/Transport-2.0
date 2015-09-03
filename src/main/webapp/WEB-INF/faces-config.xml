@@ -8,5 +8,7 @@
         <el-resolver>
             org.springframework.web.jsf.el.SpringBeanFacesELResolver
         </el-resolver>
+        <!--<view-handler>com.griffinslogistics.web.viewhandler.CustomViewHandler</view-handler>-->
     </application>
+    
 </faces-config>

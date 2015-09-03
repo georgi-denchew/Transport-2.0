@@ -203,20 +203,6 @@ function addCalendarsBackgroundImage() {
 })();
 
 
-//$('body').on('DOMNodeInserted', '.ui-datatable', function(e) {
-//    debugger;
-//    console.log(e);
-//    $(e.target).hide();
-//    $(e.target).fadeIn(500);
-//});
-
-//function removeLast(e){
-//    debugger;
-//    
-//    $(".ui-datatable tr:last-of-type").fadeOut(500);
-//}
-
-
 function cancelChanges() {
     var confirmed;
     debugger;
@@ -229,22 +215,34 @@ function cancelChanges() {
 
         }
     });
-//    
-//    swal({
-//        title: "Откажи промените?",
-//        type: "warning",
-//        showCancelButton: true, 
-//        confirmButtonColor: "#DD6B55",
-//        confirmButtonText: "OK",
-//        closeOnConfirm: true 
-//    },
-//    
-//    function (confirmed) {    
-//        if (!confirmed) {
-//            return false;
-//        }
-//    });
-//    
-//        debugger;
-
 }
+
+
+
+PrimeFaces.locales ['bg'] = {
+    closeText: 'Затвори',
+    prevText: 'Предходен',
+    nextText: 'Следващ',
+    monthNames: ['Януари', 'Февруари', 'Март', 'Април', 'Май', 'Юни', 'Юли', 'Август', 'Септември', 'Октомври', 'Ноември', 'Декември' ],
+    monthNamesShort: ['Ян', 'Феб', 'Март', 'Апр', 'Май', 'Юни', 'Юли', 'Авг', 'Септ', 'Окт', 'Ноем', 'Дек' ],
+    dayNames: ['Неделя', 'Понеделник', 'Вторник', 'Сряда', 'Четвъртък', 'Петък', 'Събота'],
+    dayNamesShort: ['Нед', 'Пон', 'Вт', 'Ср', 'Четв', 'Пет', 'Съб'],
+    dayNamesMin: ['Нед', 'Пон', 'Вт', 'Ср ', 'Четв', 'Пет ', 'Съб'],
+    weekHeader: 'Week',
+    firstDay: 1,
+    isRTL: false,
+    showMonthAfterYear: false,
+    yearSuffix:'',
+    timeOnlyTitle: 'Only Time',
+    timeText: 'Time',
+    hourText: 'Time',
+    minuteText: 'Minute',
+    secondText: 'Second',
+    currentText: 'Current Date',
+    ampm: false,
+    month: 'Month',
+    week: 'week',
+    day: 'Day',
+    allDayText: 'All Day'
+   
+};
