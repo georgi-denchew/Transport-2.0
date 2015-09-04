@@ -8,7 +8,6 @@ package com.griffinslogistics.transport;
 import com.griffinslogistics.dao.IDAO;
 import com.griffinslogistics.entities.Book;
 import com.griffinslogistics.entities.Bookspackage;
-import com.griffinslogistics.entities.Box;
 import com.griffinslogistics.entities.Transport;
 import com.griffinslogistics.entities.TruckGroup;
 import com.griffinslogistics.resource.ResourceBundleBean;
@@ -94,10 +93,9 @@ public class TransportService implements ITransportService {
             for (Book book : bookspackage.getBooks()) {
                 double weightPerBook = book.getWeightPerBook();
 
-                for (Box box : book.getBoxes()) {
-                    totalWeightForTruckGroup += box.getBooksCount() * box.getBoxesCount() * weightPerBook;
-                }
+                totalWeightForTruckGroup += book.getCount() * weightPerBook;
             }
+
             if (totalWeightForTruckGroup > 0) {
                 double totalWeightForTransport = totalWeightForTruckGroup;
 
@@ -109,15 +107,19 @@ public class TransportService implements ITransportService {
 
                 TruckGroup truckGroup = bookspackage.getTruckGroup();
 
+                String keyName;
+
                 if (truckGroup != null) {
-                    String truckGroupName = bookspackage.getTruckGroup().getName();
-
-                    if (result.containsKey(truckGroupName)) {
-                        totalWeightForTruckGroup += result.get(truckGroupName);
-                    }
-
-                    result.put(truckGroupName, totalWeightForTruckGroup);
+                    keyName = bookspackage.getTruckGroup().getName();
+                } else {
+                    keyName = resourceBundleBean.get(ResourceBundleBean.NO_TRUCK_GROUP);
                 }
+
+                if (result.containsKey(keyName)) {
+                    totalWeightForTruckGroup += result.get(keyName);
+                }
+
+                result.put(keyName, totalWeightForTruckGroup);
             }
         }
         return result;

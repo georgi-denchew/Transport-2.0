@@ -70,6 +70,8 @@ public class ResourceBundleBean extends HashMap {
     public static final String SUCCESS_ADDITIONAL_COST_ADDED = "success_additional_cost_added";
     public static final String SUCCESS_ADDITIONAL_COST_UPDATED = "success_additional_cost_updated";
     
+    public static final String NO_TRUCK_GROUP = "no_truck_group";
+    
     
     
     @Autowired
