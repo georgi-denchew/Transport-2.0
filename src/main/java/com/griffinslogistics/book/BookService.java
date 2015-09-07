@@ -50,7 +50,7 @@ public class BookService implements IBookService, Serializable {
             + "where bo.transportId = :transportId "
             + "group by bo.bookNumber ";
 
-    private static final String QUERY_BOOK_BOX_MODELS_BY_PACKAGE = "select bo.bookNumber as bookNumber, bo.title as title, b.booksCount as booksCount, sum(b.boxesCount) as boxesCount "
+    private static final String QUERY_BOOK_BOX_MODELS_BY_PACKAGE = "select bo.bookNumber as bookNumber, bo.title as title, bo.ISBN as ISBN, b.booksCount as booksCount, sum(b.boxesCount) as boxesCount "
             + "from Book bo "
             + "join bo.boxes b "
             + "where bo.bookspackageId = :bookspackageId "
@@ -224,6 +224,20 @@ public class BookService implements IBookService, Serializable {
 
     @Override
     public boolean updateBook(Book book) {
+        
+        // update all Titles for the same bookNumber in the same transport
+        DetachedCriteria criteria = DetachedCriteria.forClass(Book.class);
+        criteria.add(Restrictions.eq("transportId", book.getTransportId()));
+        criteria.add(Restrictions.eq("bookNumber", book.getBookNumber()));
+        criteria.add(Restrictions.ne("id", book.getId()));
+        
+        List<Book> toBeUpdatedList = this.dao.getAllByDetachedCriteria(criteria);
+        
+        for (Book bookToBeUpdated : toBeUpdatedList) {
+            bookToBeUpdated.setTitle(book.getTitle());
+            this.dao.update(bookToBeUpdated);
+        }
+        
         return this.dao.update(book);
     }
 
@@ -270,7 +284,7 @@ public class BookService implements IBookService, Serializable {
             for (Book book : books) {
                 BookLabelModel model = new BookLabelModel(book.getDeliveryAddress(), book.getBookspackage().getPostalCode(),
                         book.getTitle(), book.getBookNumber(), book.getBookspackage().getClient(),
-                        transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), book.getBookspackage().getPackageNumber());
+                        transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), book.getBookspackage().getPackageNumber(), book.getISBN());
 
                 result.add(model);
             }
@@ -288,7 +302,7 @@ public class BookService implements IBookService, Serializable {
             for (Book book : bookspackage.getBooks()) {
                 BookLabelModel model = new BookLabelModel(book.getDeliveryAddress(), bookspackage.getPostalCode(),
                         book.getTitle(), book.getBookNumber(), bookspackage.getClient(),
-                        transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), bookspackage.getPackageNumber());
+                        transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), bookspackage.getPackageNumber(), book.getISBN());
 
                 result.add(model);
             }
@@ -310,7 +324,7 @@ public class BookService implements IBookService, Serializable {
             Bookspackage bookspackage = book.getBookspackage();
             result = new BookLabelModel(bookspackage.getDeliveryAddress(), bookspackage.getPostalCode(),
                     book.getTitle(), book.getBookNumber(), bookspackage.getClient(),
-                    transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), bookspackage.getPackageNumber());
+                    transport.getWeekNumber() + "/" + transport.getYear(), (long) book.getCount(), bookspackage.getPackageNumber(), book.getISBN());
 
         } catch (HibernateException e) {
             logger.log(Level.SEVERE, e.getMessage());

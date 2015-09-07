@@ -324,6 +324,8 @@ public class BookLabelGenerator {
         sheet.addMergedRegion(CellRangeAddress.valueOf("$A16:A17"));
         sheet.addMergedRegion(CellRangeAddress.valueOf("$D16:D17"));
 
+        String isbn = bookLabelModel.getISBN() != null ? bookLabelModel.getISBN() : "";
+        String titleISBNString = String.format("%s %s", bookLabelModel.getTitle(), isbn);
         Row row6 = sheet.getRow(5);
         Row row7 = sheet.getRow(6);
 
@@ -336,7 +338,7 @@ public class BookLabelGenerator {
 
         Cell b6 = row6.createCell(1);
         b6.setCellStyle(styles.get(STYLE_CONTENT));
-        b6.setCellValue(bookLabelModel.getTitle());
+        b6.setCellValue(titleISBNString);
 
         Cell b7 = row7.createCell(1);
         b7.setCellStyle(styles.get(STYLE_CONTENT));
@@ -351,7 +353,7 @@ public class BookLabelGenerator {
 
         Cell e6 = row6.createCell(4);
         e6.setCellStyle(styles.get(STYLE_CONTENT));
-        e6.setCellValue(bookLabelModel.getTitle());
+        e6.setCellValue(titleISBNString);
 
         Cell e7 = row7.createCell(4);
         e7.setCellStyle(styles.get(STYLE_CONTENT));
@@ -369,7 +371,7 @@ public class BookLabelGenerator {
 
         Cell b16 = row16.createCell(1);
         b16.setCellStyle(styles.get(STYLE_CONTENT));
-        b16.setCellValue(bookLabelModel.getTitle());
+        b16.setCellValue(titleISBNString);
 
         Cell b17 = row17.createCell(1);
         b17.setCellStyle(styles.get(STYLE_CONTENT));
@@ -384,7 +386,7 @@ public class BookLabelGenerator {
 
         Cell e16 = row16.createCell(4);
         e16.setCellStyle(styles.get(STYLE_CONTENT));
-        e16.setCellValue(bookLabelModel.getTitle());
+        e16.setCellValue(titleISBNString);
 
         Cell e17 = row17.createCell(4);
         e17.setCellStyle(styles.get(STYLE_CONTENT));

@@ -32,6 +32,7 @@ public class Book implements java.io.Serializable {
     private int count;
     private double weight;
     private double weightPerBook;
+    private String ISBN;
 
     private boolean discarded;
     
@@ -236,4 +237,11 @@ public class Book implements java.io.Serializable {
         this.printingHouseId = printingHouseId;
     }
 
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+    }
 }

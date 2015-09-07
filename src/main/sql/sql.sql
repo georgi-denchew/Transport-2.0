@@ -46,7 +46,9 @@ CREATE TABLE IF NOT EXISTS `book` (
   `PackageId` BIGINT UNSIGNED NOT NULL,
   `TransportId` BIGINT UNSIGNED NOT NULL,
   `PrintingHouseId` BIGINT UNSIGNED DEFAULT NULL,
-  `DeliveryAddress` varchar(500) DEFAULT NULL
+  `DeliveryAddress` varchar(500) DEFAULT NULL,
+  `ISBN` varchar(100) DEFAULT NULL,
+
 ) ENGINE=InnoDB AUTO_INCREMENT=166 DEFAULT CHARSET=utf8;
 
 --

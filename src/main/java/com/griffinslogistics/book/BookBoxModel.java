@@ -12,6 +12,7 @@ package com.griffinslogistics.book;
 public class BookBoxModel {
     private int bookNumber;
     private String title;
+    private String ISBN;
     private String client;
     private String deliveryAddress;
     private Object booksCount;
@@ -78,5 +79,13 @@ public class BookBoxModel {
 
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
     }
 }

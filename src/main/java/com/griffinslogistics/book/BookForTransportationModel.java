@@ -28,11 +28,12 @@ public class BookForTransportationModel implements java.io.Serializable {
     private String client;
     private String merchant;
     private Date deliveryDate;
-    int boxesCount;
+    private int boxesCount;
+    private String ISBN;
 
     public BookForTransportationModel(Long id, String bookspackageNumber, String printingHouseName,
             int bookNumber, String title, int count, double weight, double weightPerBook, boolean discarded,
-            String deliveryAddress, String client, String merchant, Date deliveryDate, int boxesCount) {
+            String deliveryAddress, String client, String merchant, Date deliveryDate, int boxesCount, String ISBN) {
         this.id = id;
         this.bookspackageNumber = bookspackageNumber;
         this.printingHouseName = printingHouseName;
@@ -47,6 +48,7 @@ public class BookForTransportationModel implements java.io.Serializable {
         this.merchant = merchant;
         this.deliveryDate = deliveryDate;
         this.boxesCount = boxesCount;
+        this.ISBN = ISBN;
     }
 
     public static BookForTransportationModel fromBook(Book book) {
@@ -56,7 +58,7 @@ public class BookForTransportationModel implements java.io.Serializable {
                         book.getBookNumber(), book.getTitle(), book.getCount(), book.getWeight(),
                         book.getWeightPerBook(), book.isDiscarded(), book.getDeliveryAddress(),
                         book.getBookspackage().getClient(), book.getBookspackage().getMerchant(), 
-                        book.getBookspackage().getDeliveryDate(), book.getBoxes().size());
+                        book.getBookspackage().getDeliveryDate(), book.getBoxes().size(), book.getISBN());
 
         return bookForTransportationModel;
     }
@@ -171,5 +173,13 @@ public class BookForTransportationModel implements java.io.Serializable {
 
     public void setBoxesCount(int boxesCount) {
         this.boxesCount = boxesCount;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
     }
 }

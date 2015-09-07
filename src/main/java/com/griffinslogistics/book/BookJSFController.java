@@ -32,7 +32,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.RowEditEvent;
 
 /**
@@ -95,8 +94,7 @@ public class BookJSFController implements Serializable {
 
         String bookspackageIdString = (String) requestMap.get("bookspackage-id");
         bookspackageId = Long.parseLong(bookspackageIdString);
-        
-        
+
         bookspackage = bookspackageService.get(bookspackageId);
         transport = transportService.get(bookspackage.getTransportId());
         transportId = transport.getId();
@@ -254,8 +252,6 @@ public class BookJSFController implements Serializable {
     public String viewBookspackages() {
 
         Map<String, Object> session = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-        HttpServletResponse response = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 
         session.put("book", this.selectedBook);
         session.put("transportation", this.transport);
@@ -266,22 +262,6 @@ public class BookJSFController implements Serializable {
         Map<String, Object> session = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
         session.put("book", book);
         return "/boxes?faces-redirect=true&book-id=" + book.getId();
-    }
-
-    private void initTransportation() {
-        Map<String, Object> session = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-
-        if (this.transport == null) {
-            this.transport = (Transport) session.get("transport");
-        }
-    }
-
-    private void initBookspackage() {
-        Map<String, Object> session = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-
-        if (this.bookspackage == null) {
-            this.bookspackage = (Bookspackage) session.get("bookspackage");
-        }
     }
 
     private void initBooks() {

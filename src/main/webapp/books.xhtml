@@ -51,7 +51,19 @@
                 </p:outputPanel>
 
 
-                <h:panelGrid columns="6" cellspacing="4px">
+                <h:panelGrid columns="4" cellspacing="4px">
+
+                    <p:outputLabel for="isbn" value="ISBN:"/>
+                    <p:inputText id="isbn" value="#{bookJSFController.newBook.ISBN}"
+                                 styleClass="add-book-last-row-input"/>
+
+                    <p:outputLabel for="printing-house" value="Печатница:"/>
+                    <p:selectOneMenu style="width: 99%;" 
+                        styleClass="printing-house-drop-down add-book-last-row-label" id="printing-house" converter="#{printingHouseConverter}"
+                        value="#{bookJSFController.newBook.printingHouse}">
+                        <f:selectItem itemLabel="Изберете Печатница" itemValue="#{null}"/>
+                        <f:selectItems value="#{bookJSFController.allPrintingHouses}" var="printingHouse" itemLabel="#{printingHouse.name}" itemValue="#{printingHouse}"/>
+                    </p:selectOneMenu>
 
                     <p:outputLabel for="count" value="Брой:"/>
                     <p:inputText size="3" id="count" value="#{bookJSFController.newBook.count}"
@@ -63,13 +75,7 @@
                                  styleClass="add-book-last-row-input"
                                  converterMessage='Полето "Тегло(кг)" трябва да е число!'/>
 
-                    <p:outputLabel for="printing-house" value="Печатница:"/>
-                    <p:selectOneMenu 
-                        styleClass="printing-house-drop-down add-book-last-row-label" id="printing-house" converter="#{printingHouseConverter}"
-                        value="#{bookJSFController.newBook.printingHouse}">
-                        <f:selectItem itemLabel="Изберете Печатница" itemValue="#{null}"/>
-                        <f:selectItems value="#{bookJSFController.allPrintingHouses}" var="printingHouse" itemLabel="#{printingHouse.name}" itemValue="#{printingHouse}"/>
-                    </p:selectOneMenu>
+
                 </h:panelGrid>
 
                 <f:facet name="footer">
@@ -89,9 +95,7 @@
                          rows="20"
                          currentPageReportTemplate="Страница {currentPage} от {totalPages}"
                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="20,40 #{bookJSFController.books.size()}"
-                         
-                         >
+                         rowsPerPageTemplate="20,40 #{bookJSFController.books.size()}">
 
                 <p:column rendered="#{!bookJSFController.isForTransportation}" exportable="false" width="10%;" headerText="Действия">
                     <p:splitButton 
@@ -129,7 +133,7 @@
                 </p:column>
 
                 <p:ajax event="rowEdit" async="false"  class="edit-button" 
-                        update="books-datatable :growls"  listener="#{bookJSFController.onEdit}" />
+                        update="@this books-datatable :growls"  listener="#{bookJSFController.onEdit}" />
                 <p:ajax immediate="true" event="rowEditCancel" listener="#{bookJSFController.onCancelEdit}"
                         update="books-datatable :growls" 
                         onstart="if(confirm('Откажи промените?')) return true;"/>
@@ -140,7 +144,18 @@
                             <p:outputLabel value="#{book.title}"/>
                         </f:facet>
                         <f:facet name="input">
-                            <p:outputLabel value="#{book.title}"/>
+                            <p:inputText value="#{book.title}"/>
+                        </f:facet>
+                    </p:cellEditor>              
+                </p:column>
+
+                <p:column headerText="ISBN">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <p:outputLabel value="#{book.ISBN}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{book.ISBN}"/>
                         </f:facet>
                     </p:cellEditor>              
                 </p:column>
@@ -182,12 +197,12 @@
                         </f:facet>
                     </p:cellEditor>              
                 </p:column>
-                
-                 <p:column>
+
+                <p:column>
                     <f:facet name="header">
                         <h:outputText value="Брой Кашони"/>
                     </f:facet>
-                     <p:outputLabel value="#{book.boxes.size()}"/>  
+                    <p:outputLabel value="#{book.boxes.size()}"/>  
                 </p:column>
 
                 <p:column headerText="Брой Поръчани">

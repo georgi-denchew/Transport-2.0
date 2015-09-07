@@ -12,6 +12,7 @@ package com.griffinslogistics.book;
  */
 public class BookLabelModel {
     private String title;
+    private String ISBN;
     private int bookNumber;
     private String client;
     private String address;
@@ -21,7 +22,7 @@ public class BookLabelModel {
     private String packageNumber;
     
     
-    public BookLabelModel(String address, String postalCode, String title, int bookNumber, String client, String transportNumber, Long count, String packageNumber) {
+    public BookLabelModel(String address, String postalCode, String title, int bookNumber, String client, String transportNumber, Long count, String packageNumber, String ISBN) {
         this.address = address;
         this.postalCode = postalCode;
         this.title = title;
@@ -30,6 +31,7 @@ public class BookLabelModel {
         this.transportNumber = transportNumber;
         this.count = count;
         this.packageNumber = packageNumber;
+        this.ISBN = ISBN;
     }
 
     public BookLabelModel() {
@@ -97,5 +99,13 @@ public class BookLabelModel {
 
     public void setPackageNumber(String packageNumber) {
         this.packageNumber = packageNumber;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
     }
 }

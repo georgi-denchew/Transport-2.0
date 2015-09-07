@@ -359,7 +359,9 @@ public class BDLGenerator {
 
                 sheet.addMergedRegion(CellRangeAddress.valueOf(cellMergeString));
                 titleCell.setCellStyle(leftStyle);
-                titleCell.setCellValue(currentModel.getTitle());
+                String isbn = currentModel.getISBN() != null ? currentModel.getISBN() : "";
+                String cellString = String.format("%s %s", currentModel.getTitle(), isbn);
+                titleCell.setCellValue(cellString);
 
                 Cell quantityCell = row.createCell(5);
                 quantityCell.setCellStyle(middleStyle);

@@ -82,10 +82,17 @@
                     </f:facet>
                     <p:outputLabel value="#{book.title}"/>     
                 </p:column>
+                
+                <p:column style="width: 110px;">
+                    <f:facet name="header">
+                        <h:outputText value="ISBN"/>
+                    </f:facet>
+                    <p:outputLabel value="#{book.ISBN}"/>     
+                </p:column>
 
-                <p:column 
+                <p:column style="width: 50px !important;"
                     sortBy="#{book.bookspackageNumber}"
-                    filterBy="#{book.bookspackageNumber}"
+                    filterBy="#{book.bookspackageNumber}" filterStyle="width: 50px;"
                     filterMatchMode="startsWith">
 
                     <f:facet name="header">
@@ -96,6 +103,7 @@
 
                 <p:column 
                     sortBy="#{book.deliveryAddress}"
+                    filterStyle="width: 99%;"
                     filterBy="#{book.deliveryAddress}"
                     filterMatchMode="contains">
 
@@ -109,6 +117,7 @@
                 <p:column 
                     sortBy="#{book.deliveryDate}"
                     filterBy="#{book.deliveryDate}"
+                    filterStyle="width: 60px;"
                     filterMatchMode="contains">
                     <f:facet name="header">
                         <h:outputText value="Дата на доставка"/>
