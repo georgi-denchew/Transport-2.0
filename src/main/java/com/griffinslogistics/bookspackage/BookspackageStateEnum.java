@@ -13,6 +13,7 @@ public enum BookspackageStateEnum {
     
     NEUTRAL("", "Неутрална"),
     TNT("TNT", "TNT"),
+    TNT_AIR("TNT Air", "TNT Air"),
     FINANCE_DEPARTMENT("Финансов Отдел", "Финансов Отдел"),
     FOR_TUESDAY("За Вторник", "За Вторник");
 

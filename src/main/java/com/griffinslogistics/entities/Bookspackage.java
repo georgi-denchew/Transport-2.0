@@ -408,8 +408,9 @@ public class Bookspackage implements java.io.Serializable {
     public void setPriority(String priority) {
         this.priority = priority;
 
-        BookspackagePriorityEnum priorityEnum = BookspackagePriorityEnum.byValue(this.priority);
+        BookspackagePriorityEnum priorityEnum = BookspackagePriorityEnum.byValue(priority);
         this.setDisplayPriority(priorityEnum.getDisplayValue());
+        
     }
 
     public String getDisplayPriority() {

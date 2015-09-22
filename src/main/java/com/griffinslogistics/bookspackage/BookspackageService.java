@@ -210,6 +210,10 @@ public class BookspackageService implements IBookspackageService {
         for (Object[] revision : revisions) {
             Bookspackage bookspackage = (Bookspackage) revision[0];
             Hibernate.initialize(bookspackage.getTruckGroup());
+            
+            BookspackagePriorityEnum priorityEnum = BookspackagePriorityEnum.byValue(bookspackage.getPriority());
+            bookspackage.setDisplayPriority(priorityEnum.getDisplayValue());
+            
             bookspackages.add(bookspackage);
         }
 

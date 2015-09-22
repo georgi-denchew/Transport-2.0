@@ -293,7 +293,8 @@
                     </p:cellEditor>
                 </p:column>
 
-                <p:column>
+                <p:column filterBy="#{bookspackage.merchant}"
+                          filterMatchMode="contains">
                     <f:facet name="header">
                         <h:outputText value="Търговец"/>
                     </f:facet>
@@ -707,6 +708,14 @@
 
                     <p:column headerText="Адрес на доставка">
                         <p:outputLabel value="#{bookspackageHistory.deliveryAddress}"/>
+                    </p:column>
+
+                    <p:column headerText="Приоритет">
+                        <p:outputLabel value="#{bookspackageHistory.displayPriority}"/>
+                    </p:column>
+
+                    <p:column headerText="Статут">
+                        <p:outputLabel value="#{bookspackageHistory.state}"/>
                     </p:column>
 
                     <p:column headerText="Доставка най-късно">
