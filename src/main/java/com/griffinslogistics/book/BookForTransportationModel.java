@@ -6,6 +6,7 @@
 package com.griffinslogistics.book;
 
 import com.griffinslogistics.entities.Book;
+import com.griffinslogistics.entities.Box;
 import java.util.Date;
 
 
@@ -52,13 +53,20 @@ public class BookForTransportationModel implements java.io.Serializable {
     }
 
     public static BookForTransportationModel fromBook(Book book) {
+        
+        int boxesCount = 0;
+        
+        for (Box box : book.getBoxes()){
+            boxesCount += box.getBoxesCount();
+        }
+        
         BookForTransportationModel bookForTransportationModel
                 = new BookForTransportationModel(book.getId(), book.getBookspackage().getPackageNumber(),
                         book.getPrintingHouse() != null ? book.getPrintingHouse().getName() : null,
                         book.getBookNumber(), book.getTitle(), book.getCount(), book.getWeight(),
                         book.getWeightPerBook(), book.isDiscarded(), book.getDeliveryAddress(),
                         book.getBookspackage().getClient(), book.getBookspackage().getMerchant(), 
-                        book.getBookspackage().getDeliveryDate(), book.getBoxes().size(), book.getISBN());
+                        book.getBookspackage().getDeliveryDate(), boxesCount, book.getISBN());
 
         return bookForTransportationModel;
     }

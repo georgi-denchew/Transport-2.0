@@ -68,6 +68,9 @@ public class Book implements java.io.Serializable {
 
     @Column(name = "PrintingHouseId", updatable = false, insertable = false)
     private Long printingHouseId;
+    
+    @Transient
+    private Integer boxesCount;
 
     public Book() {
     }
@@ -243,5 +246,13 @@ public class Book implements java.io.Serializable {
 
     public void setISBN(String ISBN) {
         this.ISBN = ISBN;
+    }
+
+    public Integer getBoxesCount() {
+        return boxesCount;
+    }
+
+    public void setBoxesCount(Integer boxesCount) {
+        this.boxesCount = boxesCount;
     }
 }

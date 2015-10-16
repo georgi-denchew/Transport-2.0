@@ -88,6 +88,7 @@ public class BookService implements IBookService, Serializable {
             for (Book book : result) {
                 long totalBooksCount = 0;
                 double totalBooksWeight = 0;
+                Integer totalBoxesCount = 0;
 
                 // lazy loading
                 if (book.getPrintingHouse() != null) {
@@ -100,10 +101,12 @@ public class BookService implements IBookService, Serializable {
 
                     totalBooksCount += boxesCount * booksCount;
                     totalBooksWeight += boxesCount * booksCount * book.getWeightPerBook();
+                    totalBoxesCount += boxesCount;
                 }
 
                 book.setTotalBooksCount(totalBooksCount);
                 book.setTotalBooksWeight(totalBooksWeight);
+                book.setBoxesCount(totalBoxesCount);
             }
 
         } catch (HibernateException e) {

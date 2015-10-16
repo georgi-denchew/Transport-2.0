@@ -51,7 +51,7 @@ public class BookspackageService implements IBookspackageService {
     private static final String QUERY_BIGGEST_BOOKSPACKAGE_NUMBER_FOR_TRANSPORTATION = "select b.packageNumber from Bookspackage b where b.transportId = :transportId";
 
     @Autowired
-    IDAO bookspackageDAO;
+    IDAO dao;
 
     @Autowired
     ResourceBundleBean resourceBundleBean;
@@ -70,7 +70,7 @@ public class BookspackageService implements IBookspackageService {
         criteria.setFetchMode("bookspackages.boxes", FetchMode.JOIN);
         criteria.setFetchMode("bookspackages.books.boxes", FetchMode.JOIN);
 
-        Transport transportationForBookspackage = (Transport) this.bookspackageDAO.getByDetachedCriteria(criteria);
+        Transport transportationForBookspackage = (Transport) this.dao.getByDetachedCriteria(criteria);
 
         List<Bookspackage> bookspackages = new ArrayList(transportationForBookspackage.getBookspackages());
 
@@ -83,6 +83,7 @@ public class BookspackageService implements IBookspackageService {
             double totalBooksWeight = 0;
             int totalOrderedBooksCount = 0;
             double totalOrderedBooksWeight = 0;
+            int totalBoxesCount = 0;
 
             for (Book book : bookspackage.getBooks()) {
 
@@ -99,6 +100,7 @@ public class BookspackageService implements IBookspackageService {
 
                     totalBooksCount += boxesCount * booksCount;
                     totalBooksWeight += boxesCount * booksCount * book.getWeightPerBook();
+                    totalBoxesCount += boxesCount;
                 }
             }
 
@@ -113,6 +115,7 @@ public class BookspackageService implements IBookspackageService {
             bookspackage.setTotalBooksWeight(totalBooksWeight);
             bookspackage.setTotalOrderedBooksCount(totalOrderedBooksCount);
             bookspackage.setTotalOrderedBooksWeight(totalOrderedBooksWeight);
+            bookspackage.setBoxesCount(totalBoxesCount);
         }
 
         Collections.reverse(bookspackages);
@@ -127,7 +130,7 @@ public class BookspackageService implements IBookspackageService {
         Map<String, Object> queryParameters = new HashMap<String, Object>();
         queryParameters.put("transportId", transportId);
 
-        List<String> numberStrings = (List<String>) bookspackageDAO.getAllByQuery(QUERY_BIGGEST_BOOKSPACKAGE_NUMBER_FOR_TRANSPORTATION, queryParameters, null);
+        List<String> numberStrings = (List<String>) dao.getAllByQuery(QUERY_BIGGEST_BOOKSPACKAGE_NUMBER_FOR_TRANSPORTATION, queryParameters, null);
 
         int maxNumber = 0;
         for (String string : numberStrings) {
@@ -154,12 +157,23 @@ public class BookspackageService implements IBookspackageService {
     @Override
     public boolean updateBookspackage(Bookspackage bookspackage) {
         bookspackage.setLastModification(new Date());
-        return this.bookspackageDAO.update(bookspackage);
+
+        if (bookspackage.getBooks() != null && bookspackage.getBooks().size() > 0) {
+            Book testBook = bookspackage.getBooks().iterator().next();
+
+            if (!testBook.getDeliveryAddress().equals(bookspackage.getDeliveryAddress())) {
+                for (Book book : bookspackage.getBooks()) {
+                    book.setDeliveryAddress(bookspackage.getDeliveryAddress());
+                }
+            }
+        }
+
+        return this.dao.update(bookspackage);
     }
 
     @Override
     public Bookspackage get(Long id) {
-        return (Bookspackage) this.bookspackageDAO.get(Bookspackage.class, id);
+        return (Bookspackage) this.dao.get(Bookspackage.class, id);
     }
 
     @Override
@@ -180,7 +194,7 @@ public class BookspackageService implements IBookspackageService {
 
     @Override
     public boolean deleteBookspackage(Bookspackage bookspackage) {
-        return bookspackageDAO.delete(bookspackage);
+        return dao.delete(bookspackage);
     }
 
     @Override
@@ -188,7 +202,7 @@ public class BookspackageService implements IBookspackageService {
         Map<String, Object> queryParameters = new HashMap<String, Object>();
         queryParameters.put("transportId", transportId);
 
-        List<BookspackageCMRModel> result = (List<BookspackageCMRModel>) bookspackageDAO.getAllByQuery(QUERY_TOTAL_WEIGHT_FOR_ALL_BOOKSPACKAGES, queryParameters, BookspackageCMRModel.class);
+        List<BookspackageCMRModel> result = (List<BookspackageCMRModel>) dao.getAllByQuery(QUERY_TOTAL_WEIGHT_FOR_ALL_BOOKSPACKAGES, queryParameters, BookspackageCMRModel.class);
         return result;
     }
 
@@ -197,23 +211,23 @@ public class BookspackageService implements IBookspackageService {
         Map<String, Object> queryParameters = new HashMap<String, Object>();
         queryParameters.put("bookspackageId", bookspackageId);
 
-        BookspackageCMRModel result = (BookspackageCMRModel) bookspackageDAO.getByQuery(QUERY_TOTAL_WEIGHT_FOR_BOOKSPACKAGE, queryParameters, BookspackageCMRModel.class);
+        BookspackageCMRModel result = (BookspackageCMRModel) dao.getByQuery(QUERY_TOTAL_WEIGHT_FOR_BOOKSPACKAGE, queryParameters, BookspackageCMRModel.class);
         return result;
     }
 
     @Override
     public List<Bookspackage> getBookpackagesHistory(Long id) {
-        List<Object[]> revisions = bookspackageDAO.getRevisions(Bookspackage.class, id);
+        List<Object[]> revisions = dao.getRevisions(Bookspackage.class, id);
 
         List<Bookspackage> bookspackages = new ArrayList<Bookspackage>(revisions.size());
 
         for (Object[] revision : revisions) {
             Bookspackage bookspackage = (Bookspackage) revision[0];
             Hibernate.initialize(bookspackage.getTruckGroup());
-            
+
             BookspackagePriorityEnum priorityEnum = BookspackagePriorityEnum.byValue(bookspackage.getPriority());
             bookspackage.setDisplayPriority(priorityEnum.getDisplayValue());
-            
+
             bookspackages.add(bookspackage);
         }
 

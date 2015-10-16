@@ -109,6 +109,9 @@ public class Bookspackage implements java.io.Serializable {
     
     @Transient
     private boolean hasDiscardedBooks;
+    
+    @Transient
+    private Integer boxesCount;
 
     
     
@@ -465,5 +468,13 @@ public class Bookspackage implements java.io.Serializable {
 
     public void setLastModification(Date lastModification) {
         this.lastModification = lastModification;
+    }
+
+    public Integer getBoxesCount() {
+        return boxesCount;
+    }
+
+    public void setBoxesCount(Integer boxesCount) {
+        this.boxesCount = boxesCount;
     }
 }
