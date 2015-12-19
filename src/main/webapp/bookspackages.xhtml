@@ -242,13 +242,17 @@
                     <p:rowEditor/>
                 </p:column>
 
+                <p:ajax event="rowEditInit" oncomplete="$('.ui-row-editor span.ui-icon-pencil').each(function(){$(this).css('visibility','hidden')});" />
+                
                 <p:ajax event="rowEdit" async="false"  class="edit-button" 
                         update=" bookspackages-datatable :growls :insert-form:totals" 
-                        listener="#{bookspackageJSFController.onEdit}" />
+                        listener="#{bookspackageJSFController.onEdit}"
+                        oncomplete="$('.ui-row-editor span.ui-icon-pencil').each(function(){$(this).css('visibility','visible')});"/>
 
                 <p:ajax immediate="true" event="rowEditCancel" listener="#{bookspackageJSFController.onCancelEdit}"
                         update="bookspackages-datatable :growls" 
-                        onstart="if(confirm('Откажи промените?')) return true;"/>          
+                        onstart="$('.ui-row-editor span.ui-icon-pencil').each(function(){$(this).css('visibility','visible')});"
+                        />
 
                 <p:column sortBy="#{bookspackage.truckGroup.id}"
                           filterBy="#{bookspackage.truckGroup.id}" 
